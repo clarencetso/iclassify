@@ -19,13 +19,10 @@
 #  socket: /tmp/mysql.sock
   
 development:
-  #adapter: sqlite3
-  #database: db/iclassify_development
-  adapter: mysql
+  adapter: postgresql
   database: iclassify_development
-  username: root
-  password:
-  socket: /tmp/mysql.sock
+  username: iclassify
+  password: iclassify
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.
@@ -35,9 +32,8 @@ test:
   database: test/iclassify_test.db
 
 production:
-  adapter: mysql
+  adapter: postgresql
   database: iclassify_production
-  username: root
-  password:
-  socket: /tmp/mysql.sock
+  username: iclassify
+  password: iclassify
 

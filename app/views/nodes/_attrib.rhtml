@@ -1,8 +1,13 @@
   <h2 class="inline">Edit Attribute '<%= h attrib.name %>'</h2> 
   <%= remove_button_remote("remove_button_attrib_#{attrib.id}", "Remove Attribute", node_attrib_path(:node_id => @node.id, :id => attrib.id), "attributes_list", "Really delete attribute #{h attrib.name}?") %>
-  
-  <p style="color: green" id="attrib_edit_<%= attrib.id %>_notice"><%= flash["attrib_edit_#{attrib.id}_notice".to_sym] %></p> 
+
+  <p style="color: green" id="attrib_edit_<%= attrib.id %>_notice"><%= flash["attrib_edit_#{attrib.id}_notice".to_sym] %></p>
 <%= error_messages_for :attrib %>
+<% form_for :attrib, attrib, :url => node_attrib_path(:node_id => @node.id, :id => attrib.id), :html => { :class => "remote_form inline", :id => "edit_attrib_#{attrib.id}", :method => 'put', :update => "node_edit_#{@node.id}" } do |form| %>
+Is inheritable? <%= form.check_box :inheritable %>
+<%= submit_tag "Confirm Inheritance" %>
+<% end %>
+
 <% attrib.avalues.each do |avalue| %>
 <%= error_messages_for :avalue %>
     <% form_for :avalue, avalue, :url => node_attrib_avalue_path(:node_id => @node.id, :attrib_id => attrib.id, :id => avalue.id), :html => { :class => "remote_form inline", :id => "edit_avalue_#{avalue.id}", :method => 'put', :update => "attrib_edit_#{attrib.id}" } do |form| %>

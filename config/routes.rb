@@ -135,6 +135,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.resources :nodes do |nodes|
     nodes.resources :tags
+    nodes.resources :attribs
     nodes.resources :attribs do |attribs|
       attribs.resources :avalues
     end

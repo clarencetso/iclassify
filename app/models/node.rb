@@ -27,6 +27,8 @@ class Node < ActiveRecord::Base
   
   has_many :attribs, :dependent => :destroy
   has_and_belongs_to_many :tags
+  has_many :nodes, :dependent => :nullify
+  belongs_to :node, :dependent => :nullify
   
   validates_presence_of   :password, :if => :password_required?
   validates_presence_of   :uuid
@@ -143,6 +145,62 @@ class Node < ActiveRecord::Base
       node_unique_field = node.description if node
     end
     return node, node_unique_field
+  end
+
+  def get_ancestor_attributes(include_origin=false)
+      ancestor_nodes = []
+      full_node = Node.find(self.id)
+      ancestor_node = full_node.node
+      while (ancestor_node != nil and ancestor_node != full_node)
+        ancestor_nodes << ancestor_node
+        ancestor_node = ancestor_node.node
+      end
+
+      attribs = []
+      for i in (0..ancestor_nodes.length-1).to_a.reverse
+        logger.debug ancestor_nodes[i].description
+        ancestor_nodes[i].attribs.each do |attrib|
+          if attrib.inheritable
+            attrib_values = []
+            attrib.avalues.each do |avalue|
+              attrib_values << avalue.value
+            end
+            #TODO check for existing attribute name to do subclass overrides
+            if include_origin == true
+              attribs << { :name => attrib.name, :values => attrib_values, :origin => ancestor_nodes[i] }
+            else
+              attribs << { :name => attrib.name, :values => attrib_values }
+            end
+          end
+        end
+      end
+      logger.debug(attribs)
+      return attribs
+  end
+
+  def get_ancestor_tags(include_origin=false)
+        ancestor_nodes = []
+      full_node = Node.find(self.id)
+      ancestor_node = full_node.node
+      while (ancestor_node != nil and ancestor_node != full_node)
+        ancestor_nodes << ancestor_node
+        ancestor_node = ancestor_node.node
+      end
+
+      tags = []
+      for i in (0..ancestor_nodes.length-1).to_a.reverse
+        logger.debug ancestor_nodes[i].description
+        if ancestor_nodes[i].tags.length > 0
+          if include_origin == true
+            tags = tags + ancestor_nodes[i].tags.collect {|x| {:name => x.name, :origin => ancestor_nodes[i]}}
+          else
+            tags = tags + ancestor_nodes[i].tags.collect {|x| {:name => x.name}}
+          end
+        end
+      end
+      logger.debug("HI")
+      logger.debug(tags)
+      return tags
   end
   
   def self.bulk_tag(node_hash, tags, from_user=false)

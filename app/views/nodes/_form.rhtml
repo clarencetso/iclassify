@@ -10,6 +10,10 @@
 <td><%= form.text_field :description %></td>
 </tr>
 <tr class="line-even">
+<td><label for="node_uuid">Parent Node ID:</label></td>
+<td><%= form.text_field :node_id %></td>
+</tr>
+<tr class="line-odd">
 <td><label for="node_notes">Notes:</label></td>
 <td><%= form.text_area :notes, :cols => "40", :rows => "10" %></td>
 </tr>

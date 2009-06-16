@@ -13,6 +13,15 @@
     <th>Description</th><td><%= h @node.description %></td>
   </tr>
   <tr class="odd">
+    <th>Parent Node</th><td>
+      <% if @node.node == nil %>
+        <%= "None" %>
+      <% else %>
+        <%= link_to("#{@node.node.description}(#{@node.node.uuid})",node_path(@node.node)) %>
+      <% end %>
+</td>
+  </tr>
+  <tr>
     <th>Notes</th><td><%= h @node.notes %></td>
   </tr>
 </table>
@@ -20,10 +29,20 @@
 <% if @node.tags.length > 0 -%>
 <h2>Tags</h2>
 <table class="node_display">
+  <tr><th>Tag Name<th>Ancestor Origin</th>
     <% tr_odd = true -%>
+    <% @node.get_ancestor_tags(true).sort {|a,b| a[:name] <=> b[:name] }.each do |a| -%>
+    <tr class="<%= "odd" if tr_odd %>">
+     <td><%= a[:name] %></td>
+     <td><%= link_to a[:origin].description, node_path(a[:origin]) %></td>
+    </tr>
+    <% tr_odd = tr_odd ? false : true -%>
+    <% end -%>
+
     <% @node.tags.collect {|n| h n.name}.sort.each do |t| %>
     <tr class="<%= "odd" if tr_odd %>">
      <td><%= t %></td>
+     <td>This Node</td>
     </tr>
     <% tr_odd = tr_odd ? false : true -%> 
     <% end -%>
@@ -35,12 +54,21 @@
 <% if @node.attribs.length > 0 -%>
 <h2>Attributes</h2>
 <table class="node_display">
+    <tr><th>Attribute</th><th>Values</th><th>Ancestor Origin</th>
     <% tr_odd = true -%>
+    <% @node.get_ancestor_attributes(true).sort {|a,b| a[:name] <=> b[:name] }.each do |a| -%>
+    <tr class="<%= "odd" if tr_odd %>">
+    <th><%= h a[:name] %></th>
+    <td><div class="attrib_values"><%= a[:values].join("<br/>") %> </div></td>
+    <td><%= link_to a[:origin].description, node_path(a[:origin]) %></td></tr>
+    <% tr_odd = tr_odd ? false : true -%>
+    <% end -%>
+
     <% @node.attribs.sort {|a,b| a.name <=> b.name }.each do |a| -%>
     <tr class="<%= "odd" if tr_odd %>">
     <th><%= h a.name %></th>
     <td><div class="attrib_values"><%= a.avalues.collect { |av| "#{h av.value}" }.join("<br/>") %> </div></td>
-    </tr>
+    <td>This Node</tr>
     <% tr_odd = tr_odd ? false : true -%> 
     <% end -%> 
 </table>

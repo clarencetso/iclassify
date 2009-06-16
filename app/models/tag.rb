@@ -20,7 +20,7 @@ class Tag < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
   validates_format_of :name, 
-    :with => /\A(\w|\-)+\Z/, 
+    :with => /\A[\w\-\:]+\Z/,
     :message => "Name must be alphanumeric plus _ and -."
   
   # after_create  :update_solr

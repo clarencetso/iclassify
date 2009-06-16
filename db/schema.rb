@@ -9,25 +9,27 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 11) do
+ActiveRecord::Schema.define(:version => 13) do
 
   create_table "attribs", :force => true do |t|
-    t.integer "node_id",                 :null => false
-    t.string  "name",    :default => "", :null => false
+    t.integer "node_id",                        :null => false
+    t.string  "name",                           :null => false
+    t.boolean "inheritable", :default => false, :null => false
   end
 
   create_table "avalues", :force => true do |t|
-    t.integer "attrib_id",                 :null => false
-    t.text    "value",     :default => "", :null => false
+    t.integer "attrib_id", :null => false
+    t.text    "value",     :null => false
   end
 
   create_table "nodes", :force => true do |t|
-    t.string  "uuid",             :limit => 38, :default => "",    :null => false
+    t.string  "uuid",             :limit => 38,                    :null => false
     t.string  "description"
     t.text    "notes"
     t.string  "crypted_password", :limit => 40
     t.string  "salt",             :limit => 40
     t.boolean "quarantined",                    :default => false
+    t.integer "node_id"
   end
 
   create_table "nodes_tags", :id => false, :force => true do |t|
@@ -39,7 +41,7 @@ ActiveRecord::Schema.define(:version => 11) do
   add_index "nodes_tags", ["tag_id"], :name => "index_nodes_tags_on_tag_id"
 
   create_table "tags", :force => true do |t|
-    t.string "name", :default => "", :null => false
+    t.string "name", :null => false
   end
 
   create_table "users", :force => true do |t|
