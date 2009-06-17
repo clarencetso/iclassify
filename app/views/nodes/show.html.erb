@@ -26,7 +26,6 @@
   </tr>
 </table>
 
-<% if @node.tags.length > 0 -%>
 <h2>Tags</h2>
 <table class="node_display">
   <tr><th>Tag Name<th>Ancestor Origin</th>
@@ -47,11 +46,7 @@
     <% tr_odd = tr_odd ? false : true -%> 
     <% end -%>
 </table>
-<% else -%>
-<h2>No Tags</h2>
-<% end -%>
 
-<% if @node.attribs.length > 0 -%>
 <h2>Attributes</h2>
 <table class="node_display">
     <tr><th>Attribute</th><th>Values</th><th>Ancestor Origin</th>
@@ -72,7 +67,5 @@
     <% tr_odd = tr_odd ? false : true -%> 
     <% end -%> 
 </table>
-<% else -%>
-<h2>No Attributes</h2>
-<% end -%>
+
 </div>
