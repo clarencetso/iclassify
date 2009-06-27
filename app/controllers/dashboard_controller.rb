@@ -32,6 +32,16 @@ class DashboardController < ApplicationController
     @tags ||= Array.new
     @all_nodes = Node.find(:all)
   end
+
+  def tree
+    @unclassified_nodes = get_unclassified_nodes()
+    @tags = Tag.find(:all)
+    @tags ||= Array.new
+    @all_nodes = Node.find(:all)
+    
+    @root_nodes = Node.find(:all, :conditions => { :node_id => nil })
+    
+  end
   
   def bulk_tag
     if params[:tag_nodes] && params[:tag_list]

@@ -161,6 +161,11 @@ ActionController::Routing::Routes.draw do |map|
     :controller => "dashboard",
     :action => "bulk_tag",
     :conditions => { :method => :post }
+
+  map.connect 'dashboard/tree',
+    :controller => "dashboard",
+    :action => "tree",
+    :conditions => { :method => :get }
     
   # The priority is based upon order of creation: first created -> highest priority.
   

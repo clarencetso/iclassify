@@ -1,0 +1,10 @@
+<%#
+# To change this template, choose Tools | Templates
+# and open the template in the editor.
+%>
+<% nodes.each do |node| -%>
+  <<%= node.description %>
+  <% if node.nodes != nil -%>
+  <%= render :partial => "nodes/tree_list", :locals => { :nodes => node.nodes} %>
+  <% end -%>
+<% end -%>
