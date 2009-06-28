@@ -3,12 +3,22 @@
   <% nodes.each do |node| -%>
     <li>
       <% num_descendant_leaves = node.get_descendant_leaves.length -%>
+      <input type="checkbox" name="node_parent_checkboxes[<%= node.id %>]"/>
       <span>
         <%= link_to node.description, node_path(node) %>
         <% if num_descendant_leaves > 0 -%>
           (<%= num_descendant_leaves %> leaf nodes)
         <% end -%>
       </span>
+      <%= edit_button("Edit", edit_node_path(node)) %>
+      <%
+      msg = "Are you sure you want to delete #{node.description}?"
+      msg += "\nWARNING: This node has #{node.nodes.length} children!! Their parent will be set to NULL" if node.nodes.length > 0
+    %>
+      <%= remove_button("Delete", node_path(node), msg) %>
+      <% if num_descendant_leaves > 0 -%>
+        <%= copy_button("Code Node", {:controller => "nodes", :action => "copy", :id => node}, "Are you sure you want to make a copy of node #{node.description}?") %>
+      <% end -%>
       <% if num_descendant_leaves > 0 -%>
         <ul>
           <%= render :partial => "nodes/tree_list", :locals => { :nodes => node.nodes, :visible => visible} %>

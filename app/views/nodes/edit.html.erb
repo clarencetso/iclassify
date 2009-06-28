@@ -7,7 +7,7 @@
 
 <div id="node_information" class="fieldset">
 <% form_for(:node, :url => node_path(@node), :html => { :method => :put }) do |f| %>
-    <%= render :partial => "form", :locals => { :form => f } %>
+    <%= render :partial => "form", :locals => { :form => f, :select_nodes => @select_nodes } %>
     <%= submit_tag "Update Node Information" %>
 <% end %>
 </div>

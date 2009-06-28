@@ -59,6 +59,11 @@ ActionController::Routing::Routes.draw do |map|
       :uuid => /[[:xdigit:]]{8}[:-][[:xdigit:]]{4}[:-][[:xdigit:]]{4}[:-][[:xdigit:]]{4}[:-][[:xdigit:]]{12}/ 
     },
     :conditions => { :method => :put }
+
+  map.connect "nodes/:id/copy",
+    :controller => "nodes",
+    :action => "copy",
+    :conditions => { :method => :post }
   
   map.connect "search",
     :controller => "search",
@@ -160,6 +165,11 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'dashboard/bulk_tag',
     :controller => "dashboard",
     :action => "bulk_tag",
+    :conditions => { :method => :post }
+
+  map.connect 'dashboard/bulk_change_parent',
+    :controller => "dashboard",
+    :action => "bulk_change_parent",
     :conditions => { :method => :post }
 
   map.connect 'dashboard/tree',

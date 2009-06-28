@@ -4,13 +4,40 @@
   </div>
 <% end -%>
 
+<p id="bulk_node_parent_notice" style="color: green"><%= flash[:bulk_node_parent_notice] %></p>
+
+<%= form_tag(url_for(:controller => "dashboard", :action => "bulk_change_parent"),
+  :id => "bulk_node_parent_form", :update => "bulk_change_parent") %>
+<div id="node_parent_widget" class="fieldset">
+  <h2>Bulk Parent Node Change (applied to all selected nodes)</h2>
+  Select from the Dropdown (or type in the ID manually).
+  <br />Note that any leaves (e.g. new nodes) won't show up in this list to keep it compact.
+  <br />
+  <%
+  select_map = []
+  select_map << ['Use ID from text box -->', 'text']
+  @nodes.each do |node|
+    description = node.description
+    if node.node != nil
+      description += ' (%s)' % node.node.description
+    end
+    select_map << [description, node.id]
+  end
+  -%>
+
+  <%= select("node_parent", "select", select_map ) %>
+  <%= text_field_tag("node_parent_text", '', :size => 6, :autocomplete => "on") %>
+  <%= submit_tag "Change Parent", :id => "node_parent_submit" %>
+  <br />
+</div>
+
 <div id="treecontrol">
-  <a title="Collapse the entire tree below" href="#"><img src="../images/treeview/minus.gif" /> Collapse All</a>
-  <a title="Expand the entire tree below" href="#"><img src="../images/treeview/plus.gif" /> Expand All</a>
+  <a title="Collapse the entire tree below" href="#"><img src="/images/treeview/minus.gif" /> Collapse All</a>
+  <a title="Expand the entire tree below" href="#"><img src="/images/treeview/plus.gif" /> Expand All</a>
   <a title="Toggle the tree below, opening closed branches, closing open branches" href="#">Toggle All</a>
 </div>
-<ul id="gray" class="treeview-gray">
-  
-<%= render :partial => "nodes/tree_list", :locals => { :nodes => @root_nodes, :visible => true } %>
 
+<ul id="gray" class="treeview-gray">
+  <%= render :partial => "nodes/tree_list", :locals => { :nodes => @root_nodes, :visible => true } %>
 </ul>
+</form>

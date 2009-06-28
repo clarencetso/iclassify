@@ -1,20 +1,32 @@
 <h2>Node Information</h2>
 <table>
-    <tr class="line-even">
-<!--[form:node]-->
-<td><label for="node_uuid">UUID:</label></td>
-<td id="node_uuid_tr"><%= form.text_field :uuid, :size => 42 %></td>
-</tr>
-<tr class="line-odd">
-<td><label for="node_description">Description:</label></td>
-<td><%= form.text_field :description %></td>
-</tr>
-<tr class="line-even">
-<td><label for="node_uuid">Parent Node ID:</label></td>
-<td><%= form.text_field :node_id %></td>
-</tr>
-<tr class="line-odd">
-<td><label for="node_notes">Notes:</label></td>
-<td><%= form.text_area :notes, :cols => "40", :rows => "10" %></td>
-</tr>
+  <tr class="line-even">
+    <!--[form:node]-->
+    <td><label for="node_uuid">UUID:</label></td>
+    <td id="node_uuid_tr"><%= form.text_field :uuid, :size => 42 %></td>
+  </tr>
+  <tr class="line-odd">
+    <td><label for="node_description">Description:</label></td>
+    <td><%= form.text_field :description %></td>
+  </tr>
+  <tr class="line-even">
+    <td><label for="node_uuid">Parent Node:</label></td>
+    <td>
+      <%
+      select_map = []
+      select_nodes.each do |node|
+        description = node.description
+        if node.node != nil
+          description += ' (%s)' % node.node.description
+        end
+        select_map << [description, node.id]
+      end
+      -%>
+      <%= select "node", "node_id", select_map %>
+    </td>
+  </tr>
+  <tr class="line-odd">
+    <td><label for="node_notes">Notes:</label></td>
+    <td><%= form.text_area :notes, :cols => "40", :rows => "10" %></td>
+  </tr>
 </table>

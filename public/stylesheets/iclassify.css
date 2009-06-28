@@ -377,7 +377,3 @@ SPAN.tagMatches SPAN {
     color: #fff;
     cursor: pointer;
 }
-
-div.tree_node_children_list {
-    margin-left: 2em;
-}

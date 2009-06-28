@@ -37,7 +37,8 @@ class Node < ActiveRecord::Base
   validates_format_of :uuid,
                       :with    => UUID_REGEX,
                       :message => "Must be a valid UUID"
-                      
+
+  before_save :check_for_circular_dependencies
   before_save :encrypt_password
   before_save :update_quarantined
   
@@ -45,6 +46,23 @@ class Node < ActiveRecord::Base
   
   acts_as_solr(:fields => [ {:uuid => :text}, {:notes => :text}, {:description => :text}, {:tag => :text} ], 
                :auto_commit => true)
+
+
+  def check_for_circular_dependencies
+    node = self
+    count = 0
+    parent = node.node
+    while parent != nil
+      count = count + 1
+      if count > 10
+        return
+      end
+      if parent.id == self.id
+        return false
+      end
+      parent = parent.node
+    end
+  end
   
   def self.authenticate(username, password)
     node = find_by_uuid(username) # need to get the salt
@@ -207,6 +225,11 @@ class Node < ActiveRecord::Base
       total_leaves = total_leaves + descendant.get_descendant_leaves(false)
     end
     return total_leaves
+  end
+
+  def self.find_all_inner_nodes()
+    inner_node_ids = Node.find(:all, :select => "DISTINCT(node_id)", :conditions => "node_id IS NOT NULL").collect {|x| x.node_id }
+    return Node.find(:all, :conditions => "id IN (#{inner_node_ids.join(',')})" )
   end
   
   def self.bulk_tag(node_hash, tags, from_user=false)

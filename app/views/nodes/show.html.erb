@@ -1,71 +1,77 @@
 <div class="section_box">
-<h1 class="inline">Node <%= h @node.description %></h1>
-<% if current_user.readwrite == true -%>
-<%= edit_button("Edit", edit_node_path(@node)) %>
+  <h1 class="inline">Node <%= h @node.description %></h1>
+  <% if current_user.readwrite == true -%>
+    <%= edit_button("Edit", edit_node_path(@node)) %>
+    <%
+    msg = "Are you sure you want to delete #{@node.description}?"
+    msg += "\nWARNING: This node has #{@node.nodes.length} children!! Their parent will be set to NULL" if @node.nodes.length > 0
+  %>
+    <%= remove_button("Delete", node_path, msg) %>
+    <%= copy_button("Code Node", {:controller => "nodes", :action => "copy", :id => @node}, "Are you sure you want to make a copy of node #{@node.description}?") %>
 
-<%= remove_button("Delete", node_path, 'Are you sure?') %>
-<% end -%>
-<table class="node_display">
-  <tr class="odd">
-    <th>UUID</th><td><%= h @node.uuid %></td>
-  </tr>
-  <tr>
-    <th>Description</th><td><%= h @node.description %></td>
-  </tr>
-  <tr class="odd">
-    <th>Parent Node</th><td>
-      <% if @node.node == nil %>
-        <%= "None" %>
-      <% else %>
-        <%= link_to("#{@node.node.description}(#{@node.node.uuid})",node_path(@node.node)) %>
-      <% end %>
-</td>
-  </tr>
-  <tr>
-    <th>Notes</th><td><%= h @node.notes %></td>
-  </tr>
-</table>
+    </form>
+  <% end -%>
+  <table class="node_display">
+    <tr class="odd">
+      <th>UUID</th><td><%= h @node.uuid %></td>
+    </tr>
+    <tr>
+      <th>Description</th><td><%= h @node.description %></td>
+    </tr>
+    <tr class="odd">
+      <th>Parent Node</th><td>
+        <% if @node.node == nil %>
+          <%= "None" %>
+        <% else %>
+          <%= link_to("#{@node.node.description}(#{@node.node.uuid})",node_path(@node.node)) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>Notes</th><td><%= h @node.notes %></td>
+    </tr>
+  </table>
 
-<h2>Tags</h2>
-<table class="node_display">
-  <tr><th>Tag Name<th>Ancestor Origin</th>
+  <h2>Tags</h2>
+  <table class="node_display">
+    <tr><th>Tag Name<th>Ancestor Origin</th>
     <% tr_odd = true -%>
     <% @node.get_ancestor_tags(true).sort {|a,b| a[:name] <=> b[:name] }.each do |a| -%>
-    <tr class="<%= "odd" if tr_odd %>">
-     <td><%= a[:name] %></td>
-     <td><%= link_to a[:origin].description, node_path(a[:origin]) %></td>
-    </tr>
-    <% tr_odd = tr_odd ? false : true -%>
+      <tr class="<%= "odd" if tr_odd %>">
+        <td><%= a[:name] %></td>
+        <td><%= link_to a[:origin].description, node_path(a[:origin]) %></td>
+      </tr>
+      <% tr_odd = tr_odd ? false : true -%>
     <% end -%>
 
     <% @node.tags.collect {|n| h n.name}.sort.each do |t| %>
-    <tr class="<%= "odd" if tr_odd %>">
-     <td><%= t %></td>
-     <td>This Node</td>
-    </tr>
-    <% tr_odd = tr_odd ? false : true -%> 
+      <tr class="<%= "odd" if tr_odd %>">
+        <td><%= t %></td>
+        <td>This Node</td>
+      </tr>
+      <% tr_odd = tr_odd ? false : true -%>
     <% end -%>
-</table>
+  </table>
 
-<h2>Attributes</h2>
-<table class="node_display">
+  <h2>Attributes</h2>
+  <table class="node_display">
     <tr><th>Attribute</th><th>Values</th><th>Ancestor Origin</th>
     <% tr_odd = true -%>
     <% @node.get_ancestor_attributes(true).sort {|a,b| a[:name] <=> b[:name] }.each do |a| -%>
-    <tr class="<%= "odd" if tr_odd %>">
-    <th><%= h a[:name] %></th>
-    <td><div class="attrib_values"><%= a[:values].join("<br/>") %> </div></td>
-    <td><%= link_to a[:origin].description, node_path(a[:origin]) %></td></tr>
-    <% tr_odd = tr_odd ? false : true -%>
+      <tr class="<%= "odd" if tr_odd %>">
+        <th><%= h a[:name] %></th>
+        <td><div class="attrib_values"><%= a[:values].join("<br/>") %> </div></td>
+      <td><%= link_to a[:origin].description, node_path(a[:origin]) %></td></tr>
+      <% tr_odd = tr_odd ? false : true -%>
     <% end -%>
 
     <% @node.attribs.sort {|a,b| a.name <=> b.name }.each do |a| -%>
-    <tr class="<%= "odd" if tr_odd %>">
-    <th><%= h a.name %></th>
-    <td><div class="attrib_values"><%= a.avalues.collect { |av| "#{h av.value}" }.join("<br/>") %> </div></td>
-    <td>This Node</tr>
-    <% tr_odd = tr_odd ? false : true -%> 
-    <% end -%> 
-</table>
+      <tr class="<%= "odd" if tr_odd %>">
+        <th><%= h a.name %></th>
+        <td><div class="attrib_values"><%= a.avalues.collect { |av| "#{h av.value}" }.join("<br/>") %> </div></td>
+      <td>This Node</tr>
+      <% tr_odd = tr_odd ? false : true -%>
+    <% end -%>
+  </table>
 
 </div>

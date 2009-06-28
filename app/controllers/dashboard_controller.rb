@@ -37,8 +37,7 @@ class DashboardController < ApplicationController
     @unclassified_nodes = get_unclassified_nodes()
     @tags = Tag.find(:all)
     @tags ||= Array.new
-    @all_nodes = Node.find(:all)
-    
+    @nodes = Node.find_all_inner_nodes()
     @root_nodes = Node.find(:all, :conditions => { :node_id => nil })
     
   end
@@ -76,11 +75,41 @@ class DashboardController < ApplicationController
     end
     render :template => "dashboard/bulk_tag.js.rjs"
   end
+
+  def bulk_change_parent
+    if params[:node_parent][:select] == 'text'
+      if params[:node_parent_text] == ''
+        flash[:bulk_node_parent_notice] = "You must enter a node ID if you select that option."
+        redirect_to :action => 'tree' and return
+      end
+      parent_id = params[:node_parent_text]
+    else
+      parent_id = params[:node_parent][:select]
+    end
+
+
+    if !params.has_key?(:node_parent_checkboxes)
+      flash[:bulk_node_parent_notice] = "You didn't select any nodes to apply the change to!"
+      redirect_to :action => 'tree' and return
+    end
+    selected_nodes = Node.find(:all, :conditions => "id IN (#{params[:node_parent_checkboxes].keys.join(',')})")
+    parent_node = Node.find(:first, :conditions => ["id = ?", parent_id.to_i])
+    if parent_node == nil
+      flash[:bulk_node_parent_notice] = "We couldn't find a node that corresponded to the parent ID '#{parent_id}' that you requested!!"
+      redirect_to :action => 'tree' and return
+    end
+    selected_nodes.each do |selected_node|
+      logger.debug(selected_node.description)
+      selected_node.node = parent_node
+      selected_node.save
+    end
+    redirect_to :action => 'tree'
+  end
   
   private
   
-    def get_unclassified_nodes
-      uctag = Tag.find_by_name("unclassified", :include => :nodes)
-      uctag ? uctag.nodes : Array.new
-    end
+  def get_unclassified_nodes
+    uctag = Tag.find_by_name("unclassified", :include => :nodes)
+    uctag ? uctag.nodes : Array.new
+  end
 end

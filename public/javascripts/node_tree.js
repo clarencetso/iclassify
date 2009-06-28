@@ -6,8 +6,8 @@ $(document).ready(function(){
         collapsed: true,
         animated: "fast",
 		persist: "cookie",
-		cookieId: "treeview-grey",
-        unique: true,
+		cookieId: "treeview-gray",
+        unique: false
 	});
 
 });

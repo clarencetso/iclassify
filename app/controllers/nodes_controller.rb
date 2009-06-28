@@ -41,6 +41,7 @@ class NodesController < ApplicationController
 
   # GET /nodes/1;edit
   def edit
+    @select_nodes = Node.find(:all)
     @node = Node.find(params[:id])
     @tags = @node.tag
   end
@@ -84,7 +85,45 @@ class NodesController < ApplicationController
   def destroy
     @node = Node.find(params[:id])
     @node.destroy
-    redirect_to nodes_path
+    redirect_to :controller => 'dashboard', :action => 'tree'
+  end
+
+  # POST /nodes/1/copy
+  def copy
+    logger.debug(params.inspect)
+    @old_node = Node.find(params[:id])
+    raise "Cannot find node to copy" unless @old_node
+
+    @node = Node.new()
+    @node.uuid = UUID.random_create.to_s
+    @node.set_random_password(30)
+    @node.quarantined = @old_node.quarantined
+    @node.node = @old_node.node
+    @node.notes = @old_node.notes
+    @node.description = @old_node.description + " (COPY)"
+    @node.tags = @old_node.tags
+
+    @old_node.attribs.each do |old_attrib|
+      attrib = Attrib.new()
+      attrib.node = @node
+      attrib.name = old_attrib.name
+      attrib.inheritable = old_attrib.inheritable
+      
+      old_attrib.avalues.each do |old_avalue|
+        avalue = Avalue.new()
+        avalue.attrib = attrib
+        avalue.value = old_avalue.value
+        avalue.save
+      end
+      attrib.save
+    end
+
+    if @node.save
+      flash[:notice] = 'Node was successfully copied.'
+      redirect_to edit_node_path(@node)
+    else
+      render :action => "new"
+    end
   end
   
   def show_uuid
