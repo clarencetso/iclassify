@@ -1,10 +1,19 @@
-<%#
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-%>
-<% nodes.each do |node| -%>
-  <<%= node.description %>
-  <% if node.nodes != nil -%>
-  <%= render :partial => "nodes/tree_list", :locals => { :nodes => node.nodes} %>
+<% div_style = visible ? "" : "display: none;" -%>
+<% if nodes.length > 0 -%>
+  <% nodes.each do |node| -%>
+    <li>
+      <% num_descendant_leaves = node.get_descendant_leaves.length -%>
+      <span>
+        <%= link_to node.description, node_path(node) %>
+        <% if num_descendant_leaves > 0 -%>
+          (<%= num_descendant_leaves %> leaf nodes)
+        <% end -%>
+      </span>
+      <% if num_descendant_leaves > 0 -%>
+        <ul>
+          <%= render :partial => "nodes/tree_list", :locals => { :nodes => node.nodes, :visible => visible} %>
+        </ul>
+      <% end -%>
+    </li>
   <% end -%>
 <% end -%>

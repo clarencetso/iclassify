@@ -158,7 +158,6 @@ class Node < ActiveRecord::Base
 
       attribs = []
       for i in (0..ancestor_nodes.length-1).to_a.reverse
-        logger.debug ancestor_nodes[i].description
         ancestor_nodes[i].attribs.each do |attrib|
           if attrib.inheritable
             attrib_values = []
@@ -174,12 +173,11 @@ class Node < ActiveRecord::Base
           end
         end
       end
-      logger.debug(attribs)
       return attribs
   end
 
   def get_ancestor_tags(include_origin=false)
-        ancestor_nodes = []
+      ancestor_nodes = []
       full_node = Node.find(self.id)
       ancestor_node = full_node.node
       while (ancestor_node != nil and ancestor_node != full_node)
@@ -189,7 +187,6 @@ class Node < ActiveRecord::Base
 
       tags = []
       for i in (0..ancestor_nodes.length-1).to_a.reverse
-        logger.debug ancestor_nodes[i].description
         if ancestor_nodes[i].tags.length > 0
           if include_origin == true
             tags = tags + ancestor_nodes[i].tags.collect {|x| {:name => x.name, :origin => ancestor_nodes[i]}}
@@ -198,9 +195,18 @@ class Node < ActiveRecord::Base
           end
         end
       end
-      logger.debug("HI")
-      logger.debug(tags)
       return tags
+  end
+
+  def get_descendant_leaves(is_root=true)
+    total_leaves = []
+    if self.nodes.length == 0 and !is_root
+      return [self]
+    end
+    self.nodes.each do |descendant|
+      total_leaves = total_leaves + descendant.get_descendant_leaves(false)
+    end
+    return total_leaves
   end
   
   def self.bulk_tag(node_hash, tags, from_user=false)

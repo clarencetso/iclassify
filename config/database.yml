@@ -16,7 +16,9 @@
 #  database: iclassify_development
 #  username: root
 #  password:
-#  socket: /tmp/mysql.sock
+#  # JRuby doesn't support socket:
+#host: 127.0.0.1
+   #socket: /tmp/mysql.sock
   
 development:
   adapter: postgresql

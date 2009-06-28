@@ -107,6 +107,8 @@ class NodesController < ApplicationController
       returnv << "#{n.description}\n"
     end
     render :text => returnv
-  end    
+  end
+
+  
 
 end
